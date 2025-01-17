@@ -3,7 +3,9 @@ import { useId } from "react";
 import * as Yup from "yup";
 import s from "./ContactForm.module.css"
 import { useDispatch } from "react-redux";
-import { addContacts } from "../../redux/actions";
+import { addContacts } from "../../redux/contactsSlice";
+import { nanoid } from "@reduxjs/toolkit";
+
 
 
 const initialValues = {
@@ -20,10 +22,8 @@ const nameFieldId = useId();
 const numberFieldId = useId();
 const dispatch = useDispatch();
 
-
 const handleSubmit = (values, actions) =>{
-console.log(values);
-dispatch(addContacts({id:crypto.randomUUID(), ...values}))
+dispatch(addContacts({ id: nanoid(), ...values }))
 actions.resetForm();
 }
 

@@ -1,28 +1,37 @@
 import { configureStore } from "@reduxjs/toolkit";
-import  contactsSlice  from "./contactsSlice";
-import  filterSlice  from "./filtersSlice";
-
-export const initialValues = {
-contacts: {
-    items: [
-            { id: 0, name: "Learn HTML and CSS", number: "" },
-            { id: 1, name: "Learn HTML and CSS", number: "" },
-            { id: 2, name: "Learn HTML and CSS", number: "" },
-            { id: 3, name: "Learn HTML and CSS", number: "" },
-            { id: 4, name: "Learn HTML and CSS", number: "" },
-            { id: 5, name: "Learn HTML and CSS", number: "" }
-            ]
-},
-    filters: {
-        name: ""
-}
-    };
+import { contactsSlice } from "./contactsSlice";
+import { filtersSlice } from "./filtersSlice";
+import storage from 'redux-persist/lib/storage';
+import {
+    persistStore,
+    persistReducer,
+    FLUSH,
+    REHYDRATE,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
+} from 'redux-persist'
 
 
-    
+const persistConfig = {
+    key: 'root',
+    version: 1,
+    storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, contactsSlice);
+
 export const store = configureStore({
     reducer: {
-    contacts: contactsSlice,
-    filters: filterSlice,
-    }
+    contacts: persistedReducer,
+    filters: filtersSlice,
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+          serializableCheck: {
+            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+          },
+        }),
 });
+export const persistor = persistStore(store);
